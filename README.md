@@ -66,13 +66,7 @@ v1.0
 17.  连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
 18.  **AI工具箱：管理AI模型、知识库、智能体**
 
-## 在线体验
-
 - admin/admin123  
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
-
-演示地址：http://204.141.218.130
-
 文档地址：
 
 ## 演示图
@@ -114,7 +108,6 @@ ruoyi-langchain4j的源码全部开源免费，如果你觉得这个项目帮助
 
 - 向您的朋友推荐或分享🌹
 - 打开项目页面后右上角(Star)关注一下 ⭐
-- 通过以下二维码进行捐赠，请作者喝杯咖啡表示鼓励 ☕️
 
 <div style="display: flex; justify-content: center; gap: 10px;">
 <img src="https://jerrysu232.oss-cn-shenzhen.aliyuncs.com/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpg" width="300">
