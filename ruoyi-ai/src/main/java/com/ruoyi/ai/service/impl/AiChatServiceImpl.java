@@ -80,27 +80,43 @@ public class AiChatServiceImpl implements IAiChatService {
     private static final TimedCache<String, ChatMemory> chatMemories = new TimedCache<>(
             TimeUnit.DAYS.toMillis(1));
 
-
     @Override
     public Flux<String> chat(AiAgent aiAgent, String prompt, String clientId, String sessionId) {
         Model model = modelService.selectModelById(aiAgent.getModelId());
 
         StreamingChatModel llm = modelBuilder.getStreamingLLM(model);
+        boolean retrievalTriggered = false;
+        int retrievalHitCount = 0;
+        Double retrievalMinScore = null;
+        Integer retrievalMaxResult = null;
+        Double retrievalTop1Score = null;
+        String normalizedQuery = prompt == null ? "" : prompt.replace("\r", "\\r").replace("\n", "\\n");
+        String retrievalQueryPreview = normalizedQuery.length() > 40 ? normalizedQuery.substring(0, 40) + "..."
+                : normalizedQuery;
 
         String promptTemplate = aiAgent.getPromptTemplate();
         promptTemplate = promptTemplate.replace(Constants.USER_MSG_TEMPLATE, prompt);
 
         if (promptTemplate.contains(Constants.KNOWLEDGE_BASE_TEMPLATE) && StringUtils.isNotBlank(aiAgent.getKbIds())) {
+            retrievalTriggered = true;
             List<Long> ids = Arrays.stream(aiAgent.getKbIds().split(",")).map(Long::valueOf)
                     .collect(Collectors.toList());
             List<KnowledgeBase> kbs = knowledgeBaseService.selectKnowledgeBaseByIds(ids);
             EmbeddingModel embeddingModel;
             if (kbs != null) {
                 embeddingModel = getEmbeddingModel();
+                retrievalMaxResult = aiAgent.getMaxResult() == null ? 3 : aiAgent.getMaxResult();
+                retrievalMinScore = aiAgent.getMinScore() == null ? 0.5 : aiAgent.getMinScore();
 
                 List<EmbeddingMatch<TextSegment>> searchRes = langChain4jService.search(embeddingModel, prompt,
-                        aiAgent.getMaxResult() == null ? 3 : aiAgent.getMaxResult(), aiAgent.getMinScore() == null ? 0.7 : aiAgent.getMinScore(),
+                        retrievalMaxResult,
+                        retrievalMinScore,
                         new IsIn("kb_id", ids));
+                if (searchRes == null) {
+                    searchRes = Collections.emptyList();
+                }
+                retrievalHitCount = searchRes.size();
+                retrievalTop1Score = searchRes.isEmpty() ? null : searchRes.get(0).score();
                 StringBuilder embBuilder = new StringBuilder();
                 searchRes.stream().map(EmbeddingMatch::embedded).forEach(embedded -> {
                     String text = embedded.text();
@@ -108,9 +124,15 @@ public class AiChatServiceImpl implements IAiChatService {
                 });
                 promptTemplate = promptTemplate.replace(Constants.KNOWLEDGE_BASE_TEMPLATE, embBuilder.toString());
             }
-        } else if (promptTemplate.contains(Constants.KNOWLEDGE_BASE_TEMPLATE) && StringUtils.isBlank(aiAgent.getKbIds())) {
+        } else if (promptTemplate.contains(Constants.KNOWLEDGE_BASE_TEMPLATE)
+                && StringUtils.isBlank(aiAgent.getKbIds())) {
             promptTemplate = promptTemplate.replace(Constants.KNOWLEDGE_BASE_TEMPLATE, "");
         }
+
+        log.info(
+                "RAG_DEBUG triggered={}, kbIds={}, hitCount={}, minScore={}, maxResult={}, queryPreview={}, top1Score={}",
+                retrievalTriggered, aiAgent.getKbIds(), retrievalHitCount, retrievalMinScore, retrievalMaxResult,
+                retrievalQueryPreview, retrievalTop1Score);
 
         saveChatMessage(prompt, clientId, sessionId, aiAgent.getId(), ChatMessageType.USER);
 
@@ -147,7 +169,9 @@ public class AiChatServiceImpl implements IAiChatService {
         final ChatRequest chatRequest = ChatRequest.builder()
                 .parameters(parameters)
                 .messages(
-                        chatMemory != null ? chatMemory.messages() : systemMessage != null ? Arrays.asList(systemMessage, userMessage) : Collections.singletonList(userMessage))
+                        chatMemory != null ? chatMemory.messages()
+                                : systemMessage != null ? Arrays.asList(systemMessage, userMessage)
+                                        : Collections.singletonList(userMessage))
                 .build();
 
         return Flux.create(fluxSink -> {
@@ -238,7 +262,7 @@ public class AiChatServiceImpl implements IAiChatService {
     }
 
     private void saveChatMessage(String content, String clientId, String sessionId, Long agentId,
-                                 ChatMessageType chatMessageType) {
+            ChatMessageType chatMessageType) {
         AsyncManager.me().execute(new TimerTask() {
             @Override
             public void run() {

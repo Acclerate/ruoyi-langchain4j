@@ -217,47 +217,83 @@ export default {
       this.streamController = new AbortController()
       const chatApi = process.env.VUE_APP_BASE_API + '/ai-chat'
 
-      const response = await fetch(chatApi, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          prompt: content,
-          agentId: this.agentInfo.id,
-          clientId: this.clientId,
-          sessionId: this.sessionId
+      try {
+        const response = await fetch(chatApi, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'text/event-stream'
+          },
+          signal: this.streamController.signal,
+          body: JSON.stringify({
+            prompt: content,
+            agentId: this.agentInfo.id,
+            clientId: this.clientId,
+            sessionId: this.sessionId
+          })
         })
 
-      })
-
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder('utf-8')
-      while (true) {
-        const {done, value} = await reader.read()
-        if (done) {
-          this.isSending = false
-          const lastMessage = this.messages[this.messages.length - 1]
-          if (lastMessage) {
-            lastMessage.loading = false
-            lastMessage.content = lastMessage.content.replace('Deep thinking...', '')
-          }
-          console.log('读流完成')
-          break
+        if (!response.ok || !response.body) {
+          throw new Error('流式请求失败: ' + response.status)
         }
-        const chunk = decoder.decode(value)
-        const str = chunk.replace(/data:/g, '').trim()
 
-        const dataArray = str.split('\n')
-        dataArray.forEach(item => {
-          if (item.trim().length > 0) {
-            const res = JSON.parse(item)
-            this.updateAiMessage(res.msg)
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder('utf-8')
+        let buffer = ''
+
+        while (true) {
+          const {done, value} = await reader.read()
+          if (done) {
+            // 处理最后残留在缓冲区中的完整数据
+            const tail = buffer.trim()
+            if (tail) {
+              this.processSseLine(tail)
+            }
+            console.log('读流完成')
+            break
           }
-        })
+
+          buffer += decoder.decode(value, {stream: true})
+
+          const lines = buffer.split('\n')
+          buffer = lines.pop() || ''
+
+          lines.forEach(line => {
+            const trimmed = line.trim()
+            if (trimmed) {
+              this.processSseLine(trimmed)
+            }
+          })
+        }
+      } catch (error) {
+        if (error && error.name === 'AbortError') {
+          return
+        }
+        console.error('流式消息处理异常', error)
+        this.handleStreamError()
+      } finally {
+        this.isSending = false
+        const lastMessage = this.messages[this.messages.length - 1]
+        if (lastMessage && lastMessage.role === 'assistant') {
+          lastMessage.loading = false
+          lastMessage.content = lastMessage.content.replace('Deep thinking...', '')
+        }
       }
+    },
 
-
+    processSseLine(line) {
+      const payload = line.startsWith('data:') ? line.slice(5).trim() : line
+      if (!payload || payload === '[DONE]') {
+        return
+      }
+      try {
+        const res = JSON.parse(payload)
+        if (res && typeof res.msg === 'string') {
+          this.updateAiMessage(res.msg)
+        }
+      } catch (e) {
+        console.warn('跳过无法解析的SSE数据片段', payload)
+      }
     },
 
     /**

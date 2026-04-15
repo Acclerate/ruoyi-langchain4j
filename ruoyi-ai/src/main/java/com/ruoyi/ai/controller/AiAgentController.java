@@ -74,7 +74,8 @@ public class AiAgentController extends BaseController {
 
             String kbIds = agent.getKbIds();
             if (StringUtils.isNotBlank(kbIds)) {
-                List<String> matchedKbNames = knowledgeBases.stream().filter(x -> kbIds.contains(String.valueOf(x.getId())))
+                List<String> matchedKbNames = knowledgeBases.stream()
+                        .filter(x -> kbIds.contains(String.valueOf(x.getId())))
                         .map(KnowledgeBase::getName).collect(Collectors.toList());
                 agent.setKbNames(String.join(",", matchedKbNames));
             }
@@ -153,6 +154,5 @@ public class AiAgentController extends BaseController {
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(aiAgentService.deleteAiAgentByIds(ids));
     }
-
 
 }

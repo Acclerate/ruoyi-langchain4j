@@ -251,7 +251,7 @@ export default {
         temperature: 0.7,
         maxOutputToken: 2048,
         promptTemplate: "已知信息：{data}\n用户问题：{question}\n回答要求：\n- 请使用中文回答用户问题",
-        minScore: 0.7,
+        minScore: 0.5,
         maxResult: 3
       }
       this.resetForm("form")

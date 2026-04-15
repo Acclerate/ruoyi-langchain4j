@@ -83,15 +83,26 @@
     </delete>
 
     <select id="selectSessionList" resultType="java.util.Map">
-        SELECT a.session_id sessionId, a.content title
-        from chat_message a
-        where client_id
-            = #{clientId}
-          and agent_id = #{agentId}
-        group by a.session_id
-        order by a.create_time desc
+            SELECT session_info.session_id sessionId,
+                   (
+                       SELECT cm.content
+                       FROM chat_message cm
+                       WHERE cm.session_id = session_info.session_id
+                         AND cm.client_id = #{clientId}
+                         AND cm.agent_id = #{agentId}
+                       ORDER BY cm.create_time ASC, cm.id ASC
+                       LIMIT 1
+                   ) title
+            FROM (
+                     SELECT session_id, MAX(create_time) last_create_time
+                     FROM chat_message
+                     WHERE client_id = #{clientId}
+                       AND agent_id = #{agentId}
+                     GROUP BY session_id
+                 ) session_info
+            ORDER BY session_info.last_create_time DESC
         <if test="limit !=null">
-        limit #{limit};
+                limit #{limit}
         </if>
     </select>
 

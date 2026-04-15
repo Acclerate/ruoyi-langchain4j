@@ -142,7 +142,7 @@ ai:
     host: 127.0.0.1
     port: 5432
     database: embedding
-    user: postgres
-    password: 123456
+    user: root
+    password: root
     table: embedding
     dimension: 768

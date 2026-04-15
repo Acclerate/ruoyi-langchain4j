@@ -1,0 +1,37 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "RuoYi Application",
+            "request": "launch",
+            "mainClass": "com.ruoyi.RuoYiApplication",
+            "projectName": "ruoyi-admin",
+            "workingDirectory": "${workspaceFolder}/ruoyi-admin",
+            "env": {
+                "SPING_PROFILES_ACTIVE": "druid"
+            },
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8",
+            "javaExec": "D:/Program Files (x86)/java/jdk_21.0.2/bin/java.exe"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-EscapeUtil<ruoyi-common>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.ruoyi.common.utils.html.EscapeUtil",
+            "projectName": "ruoyi-common",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
