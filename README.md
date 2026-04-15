@@ -105,12 +105,5 @@ v1.0
 
 ## 支持项目
 
-ruoyi-langchain4j的源码全部开源免费，如果你觉得这个项目帮助到了你，您可以通过如下方式支持我：
-
-- 向您的朋友推荐或分享🌹
-- 打开项目页面后右上角(Star)关注一下 ⭐
-
-<div style="display: flex; justify-content: center; gap: 10px;">
-<img src="https://jerrysu232.oss-cn-shenzhen.aliyuncs.com/img/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE%E7%A0%81.jpg" width="300">
-<img src="https://jerrysu232.oss-cn-shenzhen.aliyuncs.com/img/%E5%BE%AE%E4%BF%A1%E6%94%B6%E6%AC%BE%E7%A0%81.jpg" width="300">
+ruoyi-langchain4j的源码全部开源免费，如果你觉得这个项目帮助到了你，您可以通过juniorshy@foxmail.com 联系
 </div>
