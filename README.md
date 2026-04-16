@@ -1,8 +1,24 @@
 [![zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=flat&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/Acclerate/ruoyi-langchain4j)
 ## 平台简介
 
-* 前端采用Vue、Element UI。
-* 后端采用Spring Boot、Spring Security、Redis & Jwt、websocket、Langchain4j、pgvector
+若依AI智能体系统，基于 [RuoYi-Vue 3.9.0](https://github.com/yangzongzhuan/RuoYi-Vue) 开发的企业管理系统，通过 LangChain4j 扩展了 AI 能力。在标准若依管理平台上新增了 AI 模型管理、知识库（RAG）、智能体管理和 AI 对话功能。
+
+### 技术栈
+
+| 类别 | 技术 | 版本 |
+|------|------|------|
+| 后端框架 | Spring Boot | 2.5.15 |
+| 安全框架 | Spring Security + JWT | 5.7.12 |
+| AI框架 | LangChain4j（BOM统一管理） | 1.13.0 |
+| 向量数据库 | PostgreSQL + pgvector | 15 |
+| 前端框架 | Vue 2 + Element UI | 2.6.12 / 2.15.14 |
+| Java | JDK | 21 |
+| 构建工具 | Maven | 3.x |
+| 缓存 | Redis | - |
+| 数据库 | MySQL | 8.0 |
+
+* 后端采用Spring Boot、Spring Security、Redis & Jwt、WebSocket、LangChain4j、pgvector。
+* AI框架支持 Ollama、OpenAI 兼容接口和本地 ONNX 推理。
 * 权限认证使用Jwt，支持多终端认证系统。
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
@@ -28,6 +44,11 @@
 
 ## 最新更新
 <p>随手 star ⭐是一种美德。 你们的star就是我的动力</p>
+
+v1.1
+
+1. 升级 LangChain4j 至 1.13.0（通过 BOM 统一管理依赖版本，不再维护双版本策略）。
+2. 升级 Lombok 至 1.18.36，修复 JDK 21 兼容性问题。
 
 v1.0
 

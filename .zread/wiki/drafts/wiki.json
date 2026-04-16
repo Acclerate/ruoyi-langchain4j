@@ -1,0 +1,194 @@
+{
+  "id": "2026-04-16-104736",
+  "generated_at": "2026-04-16T02:47:36.5545128Z",
+  "language": "en",
+  "pages": [
+    {
+      "slug": "1-overview",
+      "title": "Overview",
+      "file": "1-overview.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "2-quick-start",
+      "title": "Quick Start",
+      "file": "2-quick-start.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "3-technology-stack",
+      "title": "Technology Stack",
+      "file": "3-technology-stack.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "4-project-structure",
+      "title": "Project Structure",
+      "file": "4-project-structure.md",
+      "section": "Get Started",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "5-demo-account",
+      "title": "Demo Account",
+      "file": "5-demo-account.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "6-ai-model-management",
+      "title": "AI Model Management",
+      "file": "6-ai-model-management.md",
+      "section": "Deep Dive",
+      "group": "Core AI Features",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "7-knowledge-base-with-rag",
+      "title": "Knowledge Base with RAG",
+      "file": "7-knowledge-base-with-rag.md",
+      "section": "Deep Dive",
+      "group": "Core AI Features",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "8-ai-agent-configuration",
+      "title": "AI Agent Configuration",
+      "file": "8-ai-agent-configuration.md",
+      "section": "Deep Dive",
+      "group": "Core AI Features",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "9-streaming-chat-implementation",
+      "title": "Streaming Chat Implementation",
+      "file": "9-streaming-chat-implementation.md",
+      "section": "Deep Dive",
+      "group": "Core AI Features",
+      "level": "Advanced"
+    },
+    {
+      "slug": "10-model-provider-abstraction",
+      "title": "Model Provider Abstraction",
+      "file": "10-model-provider-abstraction.md",
+      "section": "Deep Dive",
+      "group": "Architecture \u0026 Design",
+      "level": "Advanced"
+    },
+    {
+      "slug": "11-pgvector-integration",
+      "title": "PgVector Integration",
+      "file": "11-pgvector-integration.md",
+      "section": "Deep Dive",
+      "group": "Architecture \u0026 Design",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "12-langchain4j-service-layer",
+      "title": "LangChain4j Service Layer",
+      "file": "12-langchain4j-service-layer.md",
+      "section": "Deep Dive",
+      "group": "Architecture \u0026 Design",
+      "level": "Advanced"
+    },
+    {
+      "slug": "13-security-and-authentication",
+      "title": "Security \u0026 Authentication",
+      "file": "13-security-and-authentication.md",
+      "section": "Deep Dive",
+      "group": "Architecture \u0026 Design",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "14-application-configuration",
+      "title": "Application Configuration",
+      "file": "14-application-configuration.md",
+      "section": "Deep Dive",
+      "group": "Configuration \u0026 Deployment",
+      "level": "Beginner"
+    },
+    {
+      "slug": "15-docker-deployment",
+      "title": "Docker Deployment",
+      "file": "15-docker-deployment.md",
+      "section": "Deep Dive",
+      "group": "Configuration \u0026 Deployment",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "16-database-schema",
+      "title": "Database Schema",
+      "file": "16-database-schema.md",
+      "section": "Deep Dive",
+      "group": "Configuration \u0026 Deployment",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "17-websocket-notifications",
+      "title": "WebSocket Notifications",
+      "file": "17-websocket-notifications.md",
+      "section": "Deep Dive",
+      "group": "Configuration \u0026 Deployment",
+      "level": "Advanced"
+    },
+    {
+      "slug": "18-vue-js-chat-interface",
+      "title": "Vue.js Chat Interface",
+      "file": "18-vue-js-chat-interface.md",
+      "section": "Deep Dive",
+      "group": "Frontend Implementation",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "19-markdown-rendering",
+      "title": "Markdown Rendering",
+      "file": "19-markdown-rendering.md",
+      "section": "Deep Dive",
+      "group": "Frontend Implementation",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "20-api-integration",
+      "title": "API Integration",
+      "file": "20-api-integration.md",
+      "section": "Deep Dive",
+      "group": "Frontend Implementation",
+      "level": "Beginner"
+    },
+    {
+      "slug": "21-local-onnx-model-deployment",
+      "title": "Local ONNX Model Deployment",
+      "file": "21-local-onnx-model-deployment.md",
+      "section": "Deep Dive",
+      "group": "Advanced Topics",
+      "level": "Advanced"
+    },
+    {
+      "slug": "22-multi-threaded-model-download",
+      "title": "Multi-threaded Model Download",
+      "file": "22-multi-threaded-model-download.md",
+      "section": "Deep Dive",
+      "group": "Advanced Topics",
+      "level": "Advanced"
+    },
+    {
+      "slug": "23-rate-limiting-and-memory-management",
+      "title": "Rate Limiting \u0026 Memory Management",
+      "file": "23-rate-limiting-and-memory-management.md",
+      "section": "Deep Dive",
+      "group": "Advanced Topics",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "24-document-segmentation-strategies",
+      "title": "Document Segmentation Strategies",
+      "file": "24-document-segmentation-strategies.md",
+      "section": "Deep Dive",
+      "group": "Advanced Topics",
+      "level": "Advanced"
+    }
+  ]
+}

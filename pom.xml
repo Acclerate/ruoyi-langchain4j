@@ -9,7 +9,6 @@
     <version>3.9.0</version>
 
     <name>ruoyi</name>
-    <url>http://www.ruoyi.vip</url>
     <description>若依管理系统</description>
     
     <properties>
@@ -35,8 +34,8 @@
         <logback.version>1.2.13</logback.version>
         <spring-security.version>5.7.12</spring-security.version>
         <spring-framework.version>5.3.39</spring-framework.version>
-        <langchain4j.version>1.3.0</langchain4j.version>
-        <langchain4j-beta.version>1.3.0-beta9</langchain4j-beta.version>
+        <langchain4j.version>1.13.0</langchain4j.version>
+        <lombok.version>1.18.36</lombok.version>
     </properties>
 
     <!-- 依赖声明 -->
@@ -81,6 +80,13 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+            </dependency>
+
+            <!-- 覆盖Lombok版本以兼容JDK 21 -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
 
             <!-- 覆盖tomcat的依赖配置-->
@@ -226,35 +232,13 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!-- LangChain4j BOM: 统一管理所有 LangChain4j 模块版本（含稳定版和社区beta版） -->
             <dependency>
                 <groupId>dev.langchain4j</groupId>
-                <artifactId>langchain4j</artifactId>
+                <artifactId>langchain4j-bom</artifactId>
                 <version>${langchain4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.langchain4j</groupId>
-                <artifactId>langchain4j-open-ai</artifactId>
-                <version>${langchain4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.langchain4j</groupId>
-                <artifactId>langchain4j-ollama</artifactId>
-                <version>${langchain4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.langchain4j</groupId>
-                <artifactId>langchain4j-easy-rag</artifactId>
-                <version>${langchain4j-beta.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.langchain4j</groupId>
-                <artifactId>langchain4j-pgvector</artifactId>
-                <version>${langchain4j-beta.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.langchain4j</groupId>
-                <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
-                <version>${langchain4j-beta.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
