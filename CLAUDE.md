@@ -7,9 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ruoyi-langchain4j（若依AI智能体系统）— 基于 RuoYi-Vue 3.9.0 + LangChain4j 的企业管理系统，在标准若依平台上新增 AI 模型管理、知识库（RAG）、智能体管理和 AI 对话功能。
 
 ### 技术栈
-- **后端：** Spring Boot 2.5.15, Java 8+（source/target 1.8）, MyBatis（XML映射）, Spring Security 5.7.12（JWT）, Redis（Lettuce）, Druid, Spring WebFlux（Flux流式）
+- **后端：** Spring Boot 2.5.15, Java 21, MyBatis（XML映射）, Spring Security 5.7.12（JWT）, Redis（Lettuce）, Druid, Spring WebFlux（Flux流式）, Lombok 1.18.36
 - **前端：** Vue 2.6.12 + Element UI 2.15.14, vue-router 3.4.9（history）, vuex 3.6.0, axios 0.28.1
-- **AI框架：** LangChain4j 1.13.0（BOM统一管理，核心/open-ai为1.13.0，社区模块ollama/pgvector/easy-rag/embeddings为1.13.0-beta23）
+- **AI框架：** LangChain4j 1.13.0（BOM统一管理所有模块版本，含langchain4j/open-ai/ollama/pgvector/easy-rag/embeddings-all-minilm-l6-v2）
 - **向量数据库：** PostgreSQL 15 + pgvector 扩展（默认维度768）
 - **构建：** Maven, 父POM 3.9.0, 阿里云Maven镜像
 
@@ -42,7 +42,7 @@ ruoyi-langchain4j (parent POM 3.9.0)
 ├── ruoyi-framework  → ruoyi-system
 ├── ruoyi-system     → ruoyi-common
 ├── ruoyi-common     (基础层，无项目依赖)
-├── ruoyi-ai         → ruoyi-common, ruoyi-system, ruoyi-framework (+ spring-webflux, lombok)
+├── ruoyi-ai         → ruoyi-common, ruoyi-system, ruoyi-framework (+ spring-webflux, langchain4j-bom, lombok)
 ├── ruoyi-quartz     → ruoyi-common
 └── ruoyi-generator  → ruoyi-common
 ```
