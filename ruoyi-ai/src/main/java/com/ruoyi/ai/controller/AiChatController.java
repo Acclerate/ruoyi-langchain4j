@@ -43,7 +43,7 @@ public class AiChatController extends BaseController {
 
     private void preCheck(AiAgent aiAgent, ChatReq chatReq) {
         //检查每个客户端每日请求限额是否超限
-        if (!aiChatService.checkIfOverLmtRequest(aiAgent.getId(), aiAgent.getDayLmtPerClient(),
+        if (aiChatService.checkIfOverLmtRequest(aiAgent.getId(), aiAgent.getDayLmtPerClient(),
                 chatReq.getClientId())) {
             throw new ServiceException("客户端当日请求已达上限");
         }

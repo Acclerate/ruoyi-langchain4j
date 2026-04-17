@@ -303,7 +303,11 @@ public class AiChatServiceImpl implements IAiChatService {
                 Collections.singletonList(Constants.AI_AGENT_CHAT_LMT + agentId + ":" + clientId),
                 dayLmtPerClient,
                 (int) TimeUnit.DAYS.toSeconds(1));
-        return number.intValue() <= dayLmtPerClient;
+        if (number == null) {
+            log.error("Rate limit check failed: Redis script returned null for agentId={}, clientId={}", agentId, clientId);
+            return false;
+        }
+        return number.intValue() > dayLmtPerClient;
     }
 
     @Override

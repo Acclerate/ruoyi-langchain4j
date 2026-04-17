@@ -94,13 +94,13 @@ public class ModelBuilder {
         ModelProvider provider = ModelProvider.fromValue(model.getProvider());
         ChatRequestParameters parameters = null;
         if (provider == ModelProvider.OLLAMA) {
-            parameters = OpenAiChatRequestParameters.builder()
+            parameters = OllamaChatRequestParameters.builder()
                     .modelName(model.getName())
                     .temperature(model.getTemperature())
                     .maxOutputTokens(model.getMaxOutputToken())
                     .build();
         } else {
-            parameters = OllamaChatRequestParameters.builder()
+            parameters = OpenAiChatRequestParameters.builder()
                     .modelName(model.getName())
                     .temperature(model.getTemperature())
                     .maxOutputTokens(model.getMaxOutputToken())
@@ -115,13 +115,13 @@ public class ModelBuilder {
         ModelProvider provider = ModelProvider.fromValue(model.getProvider());
         ChatRequestParameters parameters = null;
         if (provider == ModelProvider.OLLAMA) {
-            parameters = OpenAiChatRequestParameters.builder()
+            parameters = OllamaChatRequestParameters.builder()
                     .modelName(model.getName())
                     .temperature(aiAgent.getTemperature())
                     .maxOutputTokens(aiAgent.getMaxOutputToken())
                     .build();
         } else {
-            parameters = OllamaChatRequestParameters.builder()
+            parameters = OpenAiChatRequestParameters.builder()
                     .modelName(model.getName())
                     .temperature(aiAgent.getTemperature())
                     .maxOutputTokens(aiAgent.getMaxOutputToken())

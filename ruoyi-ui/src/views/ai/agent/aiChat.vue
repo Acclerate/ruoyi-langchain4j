@@ -75,7 +75,7 @@ import {nanoid} from 'nanoid'
 
 // 初始化markdown-it实例
 const md = new MarkdownIt({
-  html: true,         // 允许解析HTML
+  html: false,        // 禁止解析HTML，防止XSS攻击
   breaks: true,       // 允许换行
   linkify: true,      // 自动识别链接
   typographer: true,  // 开启排版优化

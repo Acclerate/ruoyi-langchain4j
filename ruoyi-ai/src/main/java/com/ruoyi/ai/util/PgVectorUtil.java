@@ -74,17 +74,22 @@ public class PgVectorUtil {
     return connection;
   }
 
-  static final String metadata_sql_template = "AND (metadata->>'%s')::%s is not null and (metadata->>'%s')::bigint = %s";
-
   public List<Map<String, Object>> selectByMetadata(Map<String, Object> metadata) {
-    StringBuilder sql = new StringBuilder();
-    sql.append("select * from embedding where 1=1 ");
+    if (metadata == null || metadata.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    StringBuilder sql = new StringBuilder("select * from embedding where 1=1 ");
+    List<Object> paramValues = new ArrayList<>();
     for (Entry<String, Object> entry : metadata.entrySet()) {
       String key = entry.getKey();
       Object value = entry.getValue();
-      String columnTyp = SQL_TYPE_MAP.get(value.getClass());
-      String sqlTmp = String.format(metadata_sql_template, key, columnTyp, key, value);
-      sql.append(sqlTmp);
+      String columnTyp = SQL_TYPE_MAP.getOrDefault(value.getClass(), "text");
+      sql.append("AND (metadata->>?)::").append(columnTyp)
+         .append(" is not null and (metadata->>?)::bigint = ? ");
+      paramValues.add(key);
+      paramValues.add(key);
+      paramValues.add(value);
     }
     if (logger.isDebugEnabled()) {
       logger.debug("generate sql: {}", sql);
@@ -92,6 +97,9 @@ public class PgVectorUtil {
     List<Map<String, Object>> result = new ArrayList<>();
     try (Connection connection = this.getConnection()) {
       try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+        for (int i = 0; i < paramValues.size(); i++) {
+          ps.setObject(i + 1, paramValues.get(i));
+        }
         try (ResultSet resultSet = ps.executeQuery()) {
           while (resultSet.next()) {
             Map<String, Object> item = new HashMap<>();
