@@ -22,36 +22,67 @@ import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 @Service
 public class ModelBuilder {
 
+    /** 缓存 key = modelId + "#" + configHash（配置不变则复用实例） */
+    private final ConcurrentHashMap<String, StreamingChatModel> streamingChatCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ChatModel> blockingChatCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, EmbeddingModel> embeddingCache = new ConcurrentHashMap<>();
+
+    /**
+     * 根据模型核心配置生成指纹，配置不变时可命中缓存
+     */
+    private String configKey(Long modelId, Model model) {
+        return modelId + "#" + model.getProvider() + "#" + model.getBaseUrl()
+                + "#" + model.getName() + "#" + model.getApiKey();
+    }
+
+    /**
+     * 清除指定模型ID的所有缓存实例（配置变更/删除时调用）
+     */
+    public void evict(Long modelId) {
+        streamingChatCache.keySet().removeIf(k -> k.startsWith(modelId + "#"));
+        blockingChatCache.keySet().removeIf(k -> k.startsWith(modelId + "#"));
+        embeddingCache.keySet().removeIf(k -> k.startsWith(modelId + "#"));
+    }
+
     public EmbeddingModel getEmbeddingModel(Model model) {
-        EmbeddingModel embeddingModel;
+        String key = configKey(model.getId(), model);
+        return embeddingCache.computeIfAbsent(key, k -> buildEmbeddingModel(model));
+    }
+
+    private EmbeddingModel buildEmbeddingModel(Model model) {
         ModelProvider provider = ModelProvider.fromValue(model.getProvider());
         if (provider == ModelProvider.OLLAMA) {
-            embeddingModel = OllamaEmbeddingModel.builder()
+            return OllamaEmbeddingModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .build();
         } else if (provider == ModelProvider.OPEN_AI) {
-            embeddingModel = OpenAiEmbeddingModel.builder()
+            return OpenAiEmbeddingModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .build();
         } else if (provider == ModelProvider.LOCAL) {
             String saveDir = model.getSaveDir();
-            embeddingModel = new OnnxEmbeddingModel(saveDir + "/onnx/model.onnx", saveDir + "/onnx/tokenizer.json", PoolingMode.MEAN);
+            return new OnnxEmbeddingModel(saveDir + "/onnx/model.onnx", saveDir + "/onnx/tokenizer.json", PoolingMode.MEAN);
         } else {
             throw new ServiceException("不支持的模型提供商");
         }
-        return embeddingModel;
     }
 
     public StreamingChatModel getStreamingLLM(Model model) {
+        String key = configKey(model.getId(), model);
+        return streamingChatCache.computeIfAbsent(key, k -> buildStreamingLLM(model));
+    }
+
+    private StreamingChatModel buildStreamingLLM(Model model) {
         ModelProvider provider = ModelProvider.fromValue(model.getProvider());
-        StreamingChatModel llm = null;
         if (provider == ModelProvider.OLLAMA) {
-            llm = OllamaStreamingChatModel.builder()
+            return OllamaStreamingChatModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .think(true)
@@ -60,7 +91,7 @@ public class ModelBuilder {
                     .logResponses(true)
                     .build();
         } else {
-            llm = OpenAiStreamingChatModel.builder()
+            return OpenAiStreamingChatModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .returnThinking(true)
@@ -69,25 +100,27 @@ public class ModelBuilder {
                     .logResponses(true)
                     .build();
         }
-        return llm;
     }
 
     public ChatModel getBlockingLLM(Model model) {
+        String key = configKey(model.getId(), model);
+        return blockingChatCache.computeIfAbsent(key, k -> buildBlockingLLM(model));
+    }
+
+    private ChatModel buildBlockingLLM(Model model) {
         ModelProvider provider = ModelProvider.fromValue(model.getProvider());
-        ChatModel llm = null;
         if (provider == ModelProvider.OLLAMA) {
-            llm = OllamaChatModel.builder()
+            return OllamaChatModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .build();
         } else {
-            llm = OpenAiChatModel.builder()
+            return OpenAiChatModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .apiKey(model.getApiKey())
                     .build();
         }
-        return llm;
     }
 
     public ChatRequestParameters getParameters(Model model) {

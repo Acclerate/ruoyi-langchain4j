@@ -33,6 +33,9 @@ public class ModelServiceImpl implements IModelService {
     @Resource
     private AiConfig aiConfig;
 
+    @Resource
+    private ModelBuilder modelBuilder;
+
 
     /**
      * 查询模型管理
@@ -93,7 +96,9 @@ public class ModelServiceImpl implements IModelService {
     public int updateModel(Model model) {
         checkModelConfig(model);
         model.setUpdateTime(DateUtils.getNowDate());
-        return modelMapper.updateModel(model);
+        int rows = modelMapper.updateModel(model);
+        modelBuilder.evict(model.getId());
+        return rows;
     }
 
     /**
@@ -104,6 +109,9 @@ public class ModelServiceImpl implements IModelService {
      */
     @Override
     public int deleteModelByIds(Long[] ids) {
+        for (Long id : ids) {
+            modelBuilder.evict(id);
+        }
         return modelMapper.deleteModelByIds(ids);
     }
 
@@ -115,6 +123,7 @@ public class ModelServiceImpl implements IModelService {
      */
     @Override
     public int deleteModelById(Long id) {
+        modelBuilder.evict(id);
         return modelMapper.deleteModelById(id);
     }
 }
