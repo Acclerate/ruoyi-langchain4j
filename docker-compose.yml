@@ -103,7 +103,7 @@ services:
     container_name: ruoyi-admin
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8280:8280"
     environment:
       - TZ=Asia/Shanghai
     volumes:
