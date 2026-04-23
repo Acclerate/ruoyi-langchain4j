@@ -48,8 +48,7 @@ public class WebSocketUsers {
         String key = null;
         boolean flag = USERS.containsValue(session);
         if (flag) {
-            Set<Map.Entry<String, Session>> entries = USERS.entrySet();
-            for (Map.Entry<String, Session> entry : entries) {
+            for (Map.Entry<String, Session> entry : USERS.entrySet()) {
                 Session value = entry.getValue();
                 if (value.equals(session)) {
                     key = entry.getKey();
@@ -58,6 +57,9 @@ public class WebSocketUsers {
             }
         } else {
             return true;
+        }
+        if (key == null) {
+            return false;
         }
         return remove(key);
     }

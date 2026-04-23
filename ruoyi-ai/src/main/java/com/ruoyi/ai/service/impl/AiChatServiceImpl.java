@@ -99,8 +99,17 @@ public class AiChatServiceImpl implements IAiChatService {
 
         if (promptTemplate.contains(Constants.KNOWLEDGE_BASE_TEMPLATE) && StringUtils.isNotBlank(aiAgent.getKbIds())) {
             retrievalTriggered = true;
-            List<Long> ids = Arrays.stream(aiAgent.getKbIds().split(",")).map(Long::valueOf)
-                    .collect(Collectors.toList());
+            List<Long> ids;
+            try {
+                ids = Arrays.stream(aiAgent.getKbIds().split(","))
+                        .map(String::trim)
+                        .filter(StringUtils::isNotBlank)
+                        .map(Long::valueOf)
+                        .collect(Collectors.toList());
+            } catch (NumberFormatException e) {
+                log.error("kbIds格式错误, kbIds={}", aiAgent.getKbIds(), e);
+                throw new ServiceException("知识库ID配置格式错误");
+            }
             List<KnowledgeBase> kbs = knowledgeBaseService.selectKnowledgeBaseByIds(ids);
             EmbeddingModel embeddingModel;
             if (kbs != null) {
@@ -138,14 +147,20 @@ public class AiChatServiceImpl implements IAiChatService {
 
         ChatMemory chatMemory = null;
         if (aiAgent.getMemoryCount() != null && aiAgent.getMemoryCount() > 0) {
-            chatMemory = chatMemories.get(Constants.MEMORY_CACHE_KEY_PREFIX + sessionId);
+            String memoryKey = Constants.MEMORY_CACHE_KEY_PREFIX + sessionId;
+            chatMemory = chatMemories.get(memoryKey);
             if (chatMemory == null) {
-                chatMemory = MessageWindowChatMemory.builder()
-                        .chatMemoryStore(new InMemoryChatMemoryStore())
-                        .maxMessages(aiAgent.getMemoryCount())
-                        .id(sessionId)
-                        .build();
-                chatMemories.put(Constants.MEMORY_CACHE_KEY_PREFIX + sessionId, chatMemory);
+                synchronized (chatMemories) {
+                    chatMemory = chatMemories.get(memoryKey);
+                    if (chatMemory == null) {
+                        chatMemory = MessageWindowChatMemory.builder()
+                                .chatMemoryStore(new InMemoryChatMemoryStore())
+                                .maxMessages(aiAgent.getMemoryCount())
+                                .id(sessionId)
+                                .build();
+                        chatMemories.put(memoryKey, chatMemory);
+                    }
+                }
             }
         }
 
@@ -182,6 +197,7 @@ public class AiChatServiceImpl implements IAiChatService {
 
                     @Override
                     public void onPartialThinking(PartialThinking partialThinking) {
+                        if (fluxSink.isCancelled()) return;
                         String text = partialThinking.text();
                         if (thinkCount.incrementAndGet() == 1) {
                             text = Constants.THINK_PREFIX_TAG + text;
@@ -192,12 +208,13 @@ public class AiChatServiceImpl implements IAiChatService {
                         try {
                             fluxSink.next(objectMapper.writeValueAsString(msg));
                         } catch (JsonProcessingException e) {
-                            throw new RuntimeException(e);
+                            log.error("序列化thinking消息失败", e);
                         }
                     }
 
                     @Override
                     public void onPartialResponse(String partialResponse) {
+                        if (fluxSink.isCancelled()) return;
                         if (thinkCount.intValue() > 0 && !thinkFinish.get()) {
                             partialResponse = Constants.THINK_SUFFIX_TAG + partialResponse;
                             thinkFinish.set(true);
@@ -208,13 +225,15 @@ public class AiChatServiceImpl implements IAiChatService {
                         try {
                             fluxSink.next(objectMapper.writeValueAsString(msg));
                         } catch (JsonProcessingException e) {
-                            throw new RuntimeException(e);
+                            log.error("序列化响应消息失败", e);
                         }
                     }
 
                     @Override
                     public void onCompleteResponse(ChatResponse completeResponse) {
-                        fluxSink.complete();
+                        if (!fluxSink.isCancelled()) {
+                            fluxSink.complete();
+                        }
                         StringBuilder content = new StringBuilder();
                         String thinking = completeResponse.aiMessage().thinking();
                         if (StringUtils.isNotBlank(thinking)) {
@@ -229,7 +248,10 @@ public class AiChatServiceImpl implements IAiChatService {
 
                     @Override
                     public void onError(Throwable error) {
-                        fluxSink.error(error);
+                        log.error("流式对话异常, agentId={}, sessionId={}", aiAgent.getId(), sessionId, error);
+                        if (!fluxSink.isCancelled()) {
+                            fluxSink.error(error);
+                        }
                     }
                 });
 

@@ -47,22 +47,19 @@ public class SysPasswordService
         String username = usernamePasswordAuthenticationToken.getName();
         String password = usernamePasswordAuthenticationToken.getCredentials().toString();
 
-        Integer retryCount = redisCache.getCacheObject(getCacheKey(username));
-
-        if (retryCount == null)
+        Long retryCount = redisCache.redisTemplate.opsForValue().increment(getCacheKey(username));
+        if (retryCount != null && retryCount == 1L)
         {
-            retryCount = 0;
+            redisCache.expire(getCacheKey(username), lockTime, TimeUnit.MINUTES);
         }
 
-        if (retryCount >= Integer.valueOf(maxRetryCount).intValue())
+        if (retryCount != null && retryCount > maxRetryCount)
         {
             throw new UserPasswordRetryLimitExceedException(maxRetryCount, lockTime);
         }
 
         if (!matches(user, password))
         {
-            retryCount = retryCount + 1;
-            redisCache.setCacheObject(getCacheKey(username), retryCount, lockTime, TimeUnit.MINUTES);
             throw new UserPasswordNotMatchException();
         }
         else

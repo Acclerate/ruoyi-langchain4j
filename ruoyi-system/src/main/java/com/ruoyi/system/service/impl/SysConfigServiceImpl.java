@@ -217,7 +217,7 @@ public class SysConfigServiceImpl implements ISysConfigService {
         config.setConfigValue(value);
         int row = configMapper.updateConfig(config);
         if (row > 0) {
-            redisCache.setCacheObject(configKey, value);
+            redisCache.setCacheObject(getCacheKey(configKey), value);
         }
         return row;
 

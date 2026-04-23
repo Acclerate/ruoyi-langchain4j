@@ -124,7 +124,13 @@ public class LangChain4jServiceImpl implements LangChain4jService {
     @Override
     public List<String> embedTextSegments(EmbeddingModel embeddingModel, List<TextSegment> textSegments, Consumer<List<TextSegment>> consumer) {
         String value = sysConfigService.selectConfigByKey("ai.embedding.batchSize");
-        int batchSize = Integer.parseInt(value);
+        int batchSize;
+        try {
+            batchSize = StringUtils.isNotBlank(value) ? Integer.parseInt(value) : 100;
+        } catch (NumberFormatException e) {
+            log.warn("ai.embedding.batchSize配置无效: {}, 使用默认值100", value);
+            batchSize = 100;
+        }
         List<String> ids = new ArrayList<>();
         if (textSegments.size() < batchSize) {
             ids = doEmbedding(embeddingModel, textSegments);

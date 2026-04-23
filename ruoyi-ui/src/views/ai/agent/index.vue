@@ -189,7 +189,7 @@ export default {
         status: [
           { required: true, message: "状态不能为空", trigger: "change" }
         ],
-        dayLmtPerIp: [
+        dayLmtPerClient: [
           { required: true, message: "单个Client每日访问限制次数不能为空", trigger: "blur" }
         ],
         temperature: [
@@ -247,7 +247,7 @@ export default {
         updateTime: null,
         status: 0,
         visitUrl: null,
-        dayLmtPerIp: 100,
+        dayLmtPerClient: 100,
         temperature: 0.7,
         maxOutputToken: 2048,
         promptTemplate: "已知信息：{data}\n用户问题：{question}\n回答要求：\n- 请使用中文回答用户问题",
