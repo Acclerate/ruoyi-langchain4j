@@ -60,7 +60,8 @@ public class LangChain4jServiceImpl implements LangChain4jService {
                                     ModelProvider provider, ModelType type) {
         if (type == ModelType.LLM) {
             ChatModel model = null;
-            if (provider == ModelProvider.OPEN_AI) {
+            if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
+                // SiliconFlow API兼容OpenAI格式，使用OpenAI类处理
                 model = OpenAiChatModel.builder()
                         .baseUrl(baseUrl)
                         .modelName(modelName)
@@ -86,7 +87,8 @@ public class LangChain4jServiceImpl implements LangChain4jService {
             }
         } else {
             EmbeddingModel model = null;
-            if (provider == ModelProvider.OPEN_AI) {
+            if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
+                // SiliconFlow API兼容OpenAI格式，使用OpenAI类处理
                 model = OpenAiEmbeddingModel.builder()
                         .baseUrl(baseUrl)
                         .apiKey(apiKey)

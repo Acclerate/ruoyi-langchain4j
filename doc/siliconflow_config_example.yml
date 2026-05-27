@@ -1,0 +1,88 @@
+# SiliconFlow 配置示例
+# 此文件展示如何在 application.yml 中配置 SiliconFlow 相关参数
+
+# SiliconFlow API 配置示例
+# 注意：SiliconFlow API 兼容 OpenAI 格式，因此可以使用 OpenAI 的配置方式
+
+# 示例 1: 在数据库中配置 SiliconFlow 模型
+# 以下是在数据库 model 表中插入 SiliconFlow 模型的 SQL 示例
+
+/*
+-- 插入 SiliconFlow Embedding 模型
+INSERT INTO model (name, base_url, api_key, temperature, max_output_token, type, provider, create_by, create_time)
+VALUES (
+    'Qwen/Qwen3-Embedding-8B',           -- 模型名称
+    'https://api.siliconflow.cn/v1',      -- Base URL
+    'your-siliconflow-api-key',           -- API Key (替换为您的真实API密钥)
+    0.7,                                  -- temperature
+    2048,                                 -- max_output_token
+    1,                                    -- type: 1=EMBEDDING
+    'SiliconFlow',                        -- provider
+    'admin',                              -- create_by
+    NOW()                                 -- create_time
+);
+
+-- 插入 SiliconFlow LLM 模型
+INSERT INTO model (name, base_url, api_key, temperature, max_output_token, type, provider, create_by, create_time)
+VALUES (
+    'Qwen/Qwen3-8B',                     -- 模型名称
+    'https://api.siliconflow.cn/v1',      -- Base URL
+    'your-siliconflow-api-key',           -- API Key (替换为您的真实API密钥)
+    0.7,                                  -- temperature
+    2048,                                 -- max_output_token
+    0,                                    -- type: 0=LLM
+    'SiliconFlow',                        -- provider
+    'admin',                              -- create_by
+    NOW()                                 -- create_time
+);
+*/
+
+# 示例 2: SiliconFlow 支持的模型列表
+# 
+# Embedding 模型:
+# - Qwen/Qwen3-Embedding-8B (推荐，高质量中文Embedding)
+# - BAAI/bge-large-zh-v1.5 (高质量中文Embedding)
+# - text2vec-base-chinese (基础中文Embedding)
+#
+# LLM 模型:
+# - Qwen/Qwen3-8B (通义千问8B)
+# - Qwen/Qwen3-14B (通义千问14B)
+# - Qwen/Qwen3-32B (通义千问32B)
+# - deepseek-ai/DeepSeek-V3 (DeepSeek V3)
+# - deepseek-ai/DeepSeek-R1 (DeepSeek R1)
+
+# 示例 3: SiliconFlow API 参数说明
+#
+# Base URL: https://api.siliconflow.cn/v1
+# 认证方式: Bearer Token (与OpenAI相同)
+# 请求格式: 与OpenAI API完全兼容
+#
+# 支持的API端点:
+# - /v1/embeddings (Embedding模型)
+# - /v1/chat/completions (LLM模型)
+
+# 示例 4: 在系统中配置 SiliconFlow 模型的步骤
+#
+# 1. 登录系统后台
+# 2. 进入 AI管理 → 模型管理
+# 3. 点击 新增 按钮
+# 4. 填写模型信息：
+#    - 类型: EMBEDDING 或 LLM
+#    - 提供商: SiliconFlow
+#    - 模型名称: Qwen/Qwen3-Embedding-8B (或其他模型)
+#    - Base URL: https://api.siliconflow.cn/v1
+#    - API Key: 您的SiliconFlow API密钥
+#    - Temperature: 0.7 (默认值)
+#    - Token最大生成数: 2048 (默认值)
+# 5. 点击确定保存
+# 6. 设置为默认Embedding模型 (如果是Embedding模型)
+
+# 示例 5: 知识库配置示例
+#
+# 在知识库管理中配置分段参数：
+# - 最大分段数: 500-800 字符 (推荐)
+# - 最大重叠数: 50-80 字符 (推荐)
+#
+# 在智能体配置中设置检索参数：
+# - 最小相似度得分: 0.3-0.7 (根据需求调整)
+# - 最大返回条数: 3-10 (根据需求调整)

@@ -53,10 +53,11 @@ ruoyi-langchain4j (parent POM 3.9.0)
 
 ### 模型体系
 - **两种模型类型：** LLM(type=0) 对话生成 | Embedding(type=1) 文本向量化
-- **三种提供商：** Ollama（无需API Key）| Open AI（需baseUrl+apiKey）| Local（ONNX本地推理，仅Embedding）
+- **四种提供商：** Ollama（无需API Key）| Open AI（需baseUrl+apiKey）| SiliconFlow（硅基流动，需baseUrl+apiKey）| Local（ONNX本地推理，仅Embedding）
 - **模型工厂：** `ModelBuilder.java` — 根据 `Model.provider` 创建对应 LangChain4j 模型实例
   - Ollama: `OllamaStreamingChatModel` / `OllamaEmbeddingModel`
   - OpenAI: `OpenAiStreamingChatModel` / `OpenAiEmbeddingModel`
+  - SiliconFlow: `OpenAiStreamingChatModel` / `OpenAiEmbeddingModel`（API兼容OpenAI格式）
   - Local: `OnnxEmbeddingModel(saveDir + "/onnx/model.onnx", saveDir + "/onnx/tokenizer.json", MEAN)`
 - **模型验证：** `ModelServiceImpl` 新增/修改时自动调用 `checkModelConfig()` 发送测试请求验证连通性
 - **已知bug：** `ModelBuilder.getParameters()` 第97-107行 OLLAMA/OpenAI 的 `ChatRequestParameters` 类型互换了
@@ -150,7 +151,7 @@ Controller(extends BaseController) → Service接口 → ServiceImpl → Mapper(
 ## 数据库
 
 ### AI表（MySQL `ry-vue`）
-- `model` — AI模型配置（type: 0=LLM/1=EMBEDDING, provider: Ollama/Open AI/local）
+- `model` — AI模型配置（type: 0=LLM/1=EMBEDDING, provider: Ollama/Open AI/SiliconFlow/local）
 - `knowledge_base` — 知识库元数据（仅id+name+remark，向量数据在PgVector）
 - `ai_agent` — 智能体配置（关联model_id, kb_ids逗号分隔, prompt_template, memory_count, day_lmt_per_client等）
 - `chat_message` — 聊天历史（role: user/assistant/system, 关联client_id+session_id+agent_id）

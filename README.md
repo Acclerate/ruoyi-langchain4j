@@ -18,7 +18,7 @@
 | 数据库 | MySQL | 8.0 |
 
 * 后端采用Spring Boot、Spring Security、Redis & Jwt、WebSocket、LangChain4j、pgvector。
-* AI框架支持 Ollama、OpenAI 兼容接口和本地 ONNX 推理。
+* AI框架支持 Ollama、OpenAI 兼容接口、SiliconFlow（硅基流动）和本地 ONNX 推理。
 * 权限认证使用Jwt，支持多终端认证系统。
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
@@ -44,6 +44,12 @@
 
 ## 最新更新
 <p>随手 star ⭐是一种美德。 你们的star就是我的动力</p>
+
+v1.2
+
+1. 新增 SiliconFlow（硅基流动）模型提供商支持，可使用 Qwen/Qwen3-Embedding-8B 等高质量第三方 Embedding 模型。
+2. 优化模型提供商架构，支持 OpenAI 兼容格式的第三方模型服务。
+3. 新增 SiliconFlow 集成指南，详见 [doc/siliconflow_integration.md](./doc/siliconflow_integration.md)。
 
 v1.1
 

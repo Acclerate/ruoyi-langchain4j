@@ -39,9 +39,9 @@ public StreamingChatModel getStreamingLLM(Model model) { ... }
 public EmbeddingModel getEmbeddingModel(Model model) { ... }
 ```
 
-## 2. 模型提供商：Ollama / OpenAI / Local
+## 2. 模型提供商：Ollama / OpenAI / SiliconFlow / Local
 
-`ModelProvider` 枚举定义了三种提供商，`ModelBuilder` 根据provider字段创建不同实现：
+`ModelProvider` 枚举定义了四种提供商，`ModelBuilder` 根据provider字段创建不同实现：
 
 ### 2.1 Ollama 提供商
 
@@ -88,7 +88,33 @@ OpenAiEmbeddingModel.builder()
 - 需要配置 `baseUrl`、`apiKey`、`modelName`
 - 新增/修改模型时 `ModelServiceImpl` 会自动调用 `checkModelConfig()` 发送测试请求验证连通性
 
-### 2.3 Local 本地提供商（ONNX）
+### 2.3 SiliconFlow（硅基流动）提供商
+
+```java
+// LLM — 使用OpenAI兼容接口
+OpenAiStreamingChatModel.builder()
+    .baseUrl(model.getBaseUrl())     // https://api.siliconflow.cn/v1
+    .modelName(model.getName())      // 如 Qwen/Qwen3-8B
+    .apiKey(model.getApiKey())       // SiliconFlow API Key
+    .returnThinking(true)
+    .build();
+
+// Embedding — 使用OpenAI兼容接口
+OpenAiEmbeddingModel.builder()
+    .baseUrl(model.getBaseUrl())
+    .apiKey(model.getApiKey())
+    .modelName(model.getName())      // 如 Qwen/Qwen3-Embedding-8B
+    .build();
+```
+
+- SiliconFlow API 完全兼容 OpenAI 格式，使用 OpenAI 类进行处理
+- 支持 Qwen/Qwen3-Embedding-8B 等高质量中文 Embedding 模型
+- 支持 Qwen/Qwen3-8B/14B/32B、DeepSeek-V3 等 LLM 模型
+- 需要配置 `baseUrl`、`apiKey`、`modelName`
+- Base URL：`https://api.siliconflow.cn/v1`
+- 详细集成指南请参考 [SiliconFlow 集成指南](./siliconflow_integration.md)
+
+### 2.4 Local 本地提供商（ONNX）
 
 ```java
 // 仅支持 Embedding，不支持 LLM
@@ -225,8 +251,8 @@ private void checkModelConfig(Model model) {
 }
 ```
 
-- **OLLAMA/OpenAI LLM** → 发送 `"hello"` 聊天请求
-- **OLLAMA/OpenAI Embedding** → 发送 `"test"` 向量化请求
+- **OLLAMA/OpenAI/SiliconFlow LLM** → 发送 `"hello"` 聊天请求
+- **OLLAMA/OpenAI/SiliconFlow Embedding** → 发送 `"test"` 向量化请求
 - **LOCAL Embedding** → 加载ONNX模型文件并嵌入 `"test"`
 
 ## 6. 相关源码文件索引

@@ -61,10 +61,12 @@ public class ModelBuilder {
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .build();
-        } else if (provider == ModelProvider.OPEN_AI) {
+        } else if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
+            // SiliconFlow API兼容OpenAI格式，使用OpenAI类处理
             return OpenAiEmbeddingModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
+                    .apiKey(model.getApiKey())
                     .build();
         } else if (provider == ModelProvider.LOCAL) {
             String saveDir = model.getSaveDir();
@@ -90,7 +92,8 @@ public class ModelBuilder {
                     .logRequests(true)
                     .logResponses(true)
                     .build();
-        } else {
+        } else if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
+            // SiliconFlow API兼容OpenAI格式，使用OpenAI类处理
             return OpenAiStreamingChatModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
@@ -99,6 +102,8 @@ public class ModelBuilder {
                     .logRequests(true)
                     .logResponses(true)
                     .build();
+        } else {
+            throw new ServiceException("不支持的模型提供商");
         }
     }
 
@@ -114,12 +119,15 @@ public class ModelBuilder {
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .build();
-        } else {
+        } else if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
+            // SiliconFlow API兼容OpenAI格式，使用OpenAI类处理
             return OpenAiChatModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .apiKey(model.getApiKey())
                     .build();
+        } else {
+            throw new ServiceException("不支持的模型提供商");
         }
     }
 
@@ -132,12 +140,15 @@ public class ModelBuilder {
                     .temperature(model.getTemperature())
                     .maxOutputTokens(model.getMaxOutputToken())
                     .build();
-        } else {
+        } else if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
+            // SiliconFlow API兼容OpenAI格式，使用OpenAI参数构建器
             parameters = OpenAiChatRequestParameters.builder()
                     .modelName(model.getName())
                     .temperature(model.getTemperature())
                     .maxOutputTokens(model.getMaxOutputToken())
                     .build();
+        } else {
+            throw new ServiceException("不支持的模型提供商");
         }
 
         return parameters;
@@ -153,12 +164,15 @@ public class ModelBuilder {
                     .temperature(aiAgent.getTemperature())
                     .maxOutputTokens(aiAgent.getMaxOutputToken())
                     .build();
-        } else {
+        } else if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
+            // SiliconFlow API兼容OpenAI格式，使用OpenAI参数构建器
             parameters = OpenAiChatRequestParameters.builder()
                     .modelName(model.getName())
                     .temperature(aiAgent.getTemperature())
                     .maxOutputTokens(aiAgent.getMaxOutputToken())
                     .build();
+        } else {
+            throw new ServiceException("不支持的模型提供商");
         }
 
         return parameters;

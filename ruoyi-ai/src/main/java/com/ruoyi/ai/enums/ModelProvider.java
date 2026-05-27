@@ -2,7 +2,7 @@ package com.ruoyi.ai.enums;
 
 public enum ModelProvider {
 
-    OLLAMA("Ollama"), OPEN_AI("Open AI"), LOCAL("local");
+    OLLAMA("Ollama"), OPEN_AI("Open AI"), LOCAL("local"), SILICONFLOW("SiliconFlow");
 
     private final String value;
 
