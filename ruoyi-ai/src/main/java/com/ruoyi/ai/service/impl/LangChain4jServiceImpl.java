@@ -7,6 +7,7 @@ import com.ruoyi.ai.service.LangChain4jService;
 import com.ruoyi.ai.util.Constants;
 import com.ruoyi.ai.util.PgVectorUtil;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysConfigService;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
@@ -57,7 +58,7 @@ public class LangChain4jServiceImpl implements LangChain4jService {
 
     @Override
     public boolean checkModelConfig(String baseUrl, String apiKey, String modelName,
-                                    ModelProvider provider, ModelType type) {
+            ModelProvider provider, ModelType type) {
         if (type == ModelType.LLM) {
             ChatModel model = null;
             if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
@@ -124,7 +125,8 @@ public class LangChain4jServiceImpl implements LangChain4jService {
     }
 
     @Override
-    public List<String> embedTextSegments(EmbeddingModel embeddingModel, List<TextSegment> textSegments, Consumer<List<TextSegment>> consumer) {
+    public List<String> embedTextSegments(EmbeddingModel embeddingModel, List<TextSegment> textSegments,
+            Consumer<List<TextSegment>> consumer) {
         String value = sysConfigService.selectConfigByKey("ai.embedding.batchSize");
         int batchSize;
         try {
@@ -159,7 +161,6 @@ public class LangChain4jServiceImpl implements LangChain4jService {
         return embeddingStore.addAll(embeddings, textSegments);
     }
 
-
     @Override
     public List<Map<String, Object>> querySegmentTextEqualsByMetaData(
             Map<String, Object> metadata) {
@@ -173,7 +174,7 @@ public class LangChain4jServiceImpl implements LangChain4jService {
 
     @Override
     public void updateSegment(EmbeddingModel embeddingModel, TextSegment textSegment,
-                              String embeddingId) {
+            String embeddingId) {
         Response<Embedding> response = embeddingModel.embed(textSegment);
         Embedding embedding = response.content();
         embeddingStore.removeAll(Collections.singletonList(embeddingId));
@@ -183,7 +184,7 @@ public class LangChain4jServiceImpl implements LangChain4jService {
 
     @Override
     public List<EmbeddingMatch<TextSegment>> search(EmbeddingModel embeddingModel, String query,
-                                                    int maxResult, double minScore, Filter filter) {
+            int maxResult, double minScore, Filter filter) {
         Response<Embedding> response = embeddingModel.embed(query);
 
         EmbeddingSearchRequestBuilder searchBuilder = EmbeddingSearchRequest.builder();
