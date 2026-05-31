@@ -76,7 +76,15 @@ public class ModelController extends BaseController {
     public TableDataInfo list(Model model) {
         startPage();
         List<Model> list = modelService.selectModelList(model);
+        list.forEach(this::maskApiKey);
         return getDataTable(list);
+    }
+
+    private void maskApiKey(Model model) {
+        String key = model.getApiKey();
+        if (key != null && key.length() > 4) {
+            model.setApiKey("*".repeat(key.length() - 4) + key.substring(key.length() - 4));
+        }
     }
 
     /**
@@ -87,6 +95,7 @@ public class ModelController extends BaseController {
     @PostMapping("/export")
     public void export(HttpServletResponse response, Model model) {
         List<Model> list = modelService.selectModelList(model);
+        list.forEach(this::maskApiKey);
         ExcelUtil<Model> util = new ExcelUtil<Model>(Model.class);
         util.exportExcel(response, list, "模型管理数据");
     }
