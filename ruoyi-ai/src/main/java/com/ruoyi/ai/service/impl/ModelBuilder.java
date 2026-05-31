@@ -92,13 +92,26 @@ public class ModelBuilder {
                     .logRequests(true)
                     .logResponses(true)
                     .build();
-        } else if (provider == ModelProvider.OPEN_AI || provider == ModelProvider.SILICONFLOW) {
-            // SiliconFlow API兼容OpenAI格式，使用OpenAI类处理
+        } else if (provider == ModelProvider.OPEN_AI) {
+            // OpenAI 原生接口支持 returnThinking
             return OpenAiStreamingChatModel.builder()
                     .baseUrl(model.getBaseUrl())
                     .modelName(model.getName())
                     .returnThinking(true)
                     .apiKey(model.getApiKey())
+                    .logRequests(true)
+                    .logResponses(true)
+                    .build();
+        } else if (provider == ModelProvider.SILICONFLOW) {
+            // SiliconFlow DeepSeek: 根据LangChain4j文档配置
+            // returnThinking(true) - 解析reasoning_content字段
+            // accumulateToolCallId(false) - DeepSeek/Qwen需要设置为false
+            return OpenAiStreamingChatModel.builder()
+                    .baseUrl(model.getBaseUrl())
+                    .modelName(model.getName())
+                    .apiKey(model.getApiKey())
+                    .returnThinking(true)
+                    .accumulateToolCallId(false)
                     .logRequests(true)
                     .logResponses(true)
                     .build();

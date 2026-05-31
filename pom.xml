@@ -34,7 +34,7 @@
         <logback.version>1.2.13</logback.version>
         <spring-security.version>5.7.12</spring-security.version>
         <spring-framework.version>5.3.39</spring-framework.version>
-        <langchain4j.version>1.13.0</langchain4j.version>
+        <langchain4j.version>1.15.0</langchain4j.version>
         <lombok.version>1.18.36</lombok.version>
     </properties>
 

@@ -95,6 +95,9 @@ public class AiChatServiceImpl implements IAiChatService {
                 : normalizedQuery;
 
         String promptTemplate = aiAgent.getPromptTemplate();
+        if (StringUtils.isBlank(promptTemplate)) {
+            promptTemplate = Constants.USER_MSG_TEMPLATE;
+        }
         promptTemplate = promptTemplate.replace(Constants.USER_MSG_TEMPLATE, prompt);
 
         if (promptTemplate.contains(Constants.KNOWLEDGE_BASE_TEMPLATE) && StringUtils.isNotBlank(aiAgent.getKbIds())) {
@@ -173,20 +176,28 @@ public class AiChatServiceImpl implements IAiChatService {
         UserMessage userMessage = UserMessage.from(promptTemplate);
 
         if (chatMemory != null) {
-            if (systemMessage != null) {
-                chatMemory.add(systemMessage);
-            }
             chatMemory.add(userMessage);
         }
 
         ChatRequestParameters parameters = modelBuilder.getParameters(aiAgent);
 
+        List<dev.langchain4j.data.message.ChatMessage> messages;
+        if (chatMemory != null) {
+            List<dev.langchain4j.data.message.ChatMessage> memoryMessages = chatMemory.messages();
+            messages = new ArrayList<>(memoryMessages.size() + 1);
+            if (systemMessage != null) {
+                messages.add(systemMessage);
+            }
+            messages.addAll(memoryMessages);
+        } else if (systemMessage != null) {
+            messages = Arrays.asList(systemMessage, userMessage);
+        } else {
+            messages = Collections.singletonList(userMessage);
+        }
+
         final ChatRequest chatRequest = ChatRequest.builder()
                 .parameters(parameters)
-                .messages(
-                        chatMemory != null ? chatMemory.messages()
-                                : systemMessage != null ? Arrays.asList(systemMessage, userMessage)
-                                        : Collections.singletonList(userMessage))
+                .messages(messages)
                 .build();
 
         return Flux.create(fluxSink -> {
